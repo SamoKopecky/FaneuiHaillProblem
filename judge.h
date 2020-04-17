@@ -3,6 +3,6 @@
 
 #include "includes.h"
 
-void start_judge();
+void judge(int *counter, sem_t *counter_mutex);
 
 #endif

@@ -1,6 +1,6 @@
-#include "imigrant.h"
+#include "immigrant.h"
 
-void imigrant()
+void immigrant()
 {
     printf("A: IMM 1 I: starts\n");
     exit(0);

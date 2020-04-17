@@ -1,2 +1,2 @@
 default: main.c
-	gcc -std=gnu99 -o proj2 main.c imigrant_factory.c imigrant.c judge.c
+	gcc -std=gnu99 -o proj2 -pthread main.c immigrant_factory.c immigrant.c -pthread judge.c
