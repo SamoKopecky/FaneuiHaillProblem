@@ -6,12 +6,12 @@ void judge(action_counter_sync_t action_counter_sync, immigrant_info_t immigrant
     sleep(1);
 
     sem_wait(action_counter_sync.mutex);
+    sem_wait(semaphores.judge_inside_mutex);
     *action_counter_sync.value += 1;
     printf("%d\t: JUDGE\t: wants to enter\t\n", *action_counter_sync.value);
     sem_post(action_counter_sync.mutex);
 
     sem_wait(action_counter_sync.mutex);
-    sem_wait(semaphores.judge_inside_mutex);
     *action_counter_sync.value += 1;
     printf("%d\t: JUDGE\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     sem_post(action_counter_sync.mutex);
