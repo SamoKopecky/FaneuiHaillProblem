@@ -6,11 +6,20 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <semaphore.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
 
-struct process_counter
+typedef struct action_counter_sync action_counter_sync_t;
+
+struct action_counter_sync
 {
     int *value;
     sem_t *mutex;
 };
+
+void *init_global_var(int size);
 
 #endif
