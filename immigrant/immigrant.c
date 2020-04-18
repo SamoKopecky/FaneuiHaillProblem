@@ -19,9 +19,9 @@ void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immig
     *immigrant_info.NE += 1;
     *immigrant_info.NB += 1;
     printf("%d\t: IMM %d\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
+    sem_post(semaphores.judge_inside_mutex);
     sem_post(action_counter_sync.mutex);
     sem_wait(semaphores.immigrants_registered_mutex);
-    sem_post(semaphores.judge_inside_mutex);
 
     if (immigrant_info.name == 1)
     {
