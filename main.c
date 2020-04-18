@@ -12,10 +12,10 @@ int *action_counter;
 sem_t *action_mutex;
 sem_t *judge_inside_mutex;
 sem_t *immigrants_registered_mutex;
+sem_t *judge_waiting;
 
 // Custom structs
 action_counter_sync_t action_counter_sync;
-semaphores_t semaphores;
 immigrant_info_t immigrant_info;
 
 void map_shared_mem()
@@ -35,8 +35,7 @@ void map_shared_mem()
 
   judge_inside_mutex = init_global_var(sizeof judge_inside_mutex);
   immigrants_registered_mutex = init_global_var(sizeof immigrants_registered_mutex);
-  semaphores.immigrants_registered_mutex = immigrants_registered_mutex;
-  semaphores.judge_inside_mutex = judge_inside_mutex;
+  judge_waiting = init_global_var(sizeof judge_waiting);
 }
 
 void unmap_shared_mem()
@@ -48,6 +47,7 @@ void unmap_shared_mem()
   munmap(NULL, sizeof NB);
   munmap(NULL, sizeof judge_inside_mutex);
   munmap(NULL, sizeof immigrants_registered_mutex);
+  munmap(NULL, sizeof judge_waiting);
 }
 
 void init_semaphores()
@@ -55,6 +55,7 @@ void init_semaphores()
   sem_init(action_mutex, 1, 1);
   sem_init(judge_inside_mutex, 1, 1);
   sem_init(immigrants_registered_mutex, 1, 1);
+  sem_init(judge_waiting, 1, 1);
 }
 
 void destroy_semaphores()
@@ -62,6 +63,7 @@ void destroy_semaphores()
   sem_destroy(action_mutex);
   sem_destroy(judge_inside_mutex);
   sem_destroy(immigrants_registered_mutex);
+  sem_destroy(judge_waiting);
 }
 
 void string_to_int(int *number, char *string)
@@ -77,11 +79,11 @@ void create_children(int *PI)
     {
       if ((pid_t = fork()) == 0 && i == 0)
       {
-        immigrant_factory(PI, action_counter_sync, immigrant_info, semaphores);
+        immigrant_factory(PI, action_counter_sync, immigrant_info, judge_inside_mutex, immigrants_registered_mutex, judge_waiting);
       }
       else if (pid_t == 0 && i == 1)
       {
-        judge(action_counter_sync, immigrant_info, semaphores);
+        judge(action_counter_sync, immigrant_info, judge_inside_mutex, immigrants_registered_mutex, judge_waiting);
       }
     }
   }

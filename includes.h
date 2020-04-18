@@ -13,27 +13,11 @@
 #include <sys/types.h>
 
 typedef struct action_counter_sync action_counter_sync_t;
-typedef struct semaphores semaphores_t;
-typedef struct immigrant_info immigrant_info_t;
 
 struct action_counter_sync
 {
     int *value;
     sem_t *mutex;
-};
-
-struct immigrant_info
-{
-    int *NE;
-    int *NC;
-    int *NB;
-    int name;
-};
-
-struct semaphores
-{
-    sem_t *judge_inside_mutex;
-    sem_t *immigrants_registered_mutex;
 };
 
 void *init_global_var(int size);
