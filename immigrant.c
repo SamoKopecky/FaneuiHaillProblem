@@ -7,10 +7,11 @@ void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immig
     *action_counter_sync.value += 1;
     printf("%d\t: IMM %d\t: starts\n", *action_counter_sync.value, immigrant_info.name);
     sem_post(action_counter_sync.mutex);
-    /* if (immigrant_info.name == 2)
+
+    if (immigrant_info.name == 2)
     {
         sleep(3);
-    } */
+    }
 
     sem_wait(judge_inside_mutex);
     *action_counter_sync.value += 1;
