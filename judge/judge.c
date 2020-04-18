@@ -40,6 +40,8 @@ void judge(action_counter_sync_t action_counter_sync, immigrant_info_t immigrant
     printf("%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     sem_post(action_counter_sync.mutex);
 
+    sleep(2);
+
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;
     printf("%d\t: JUDGE\t: leaves\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
