@@ -14,10 +14,10 @@ void judge(action_counter_sync_t action_counter_sync, immigrant_info_t immigrant
     *action_counter_sync.value += 1;
     printf("%d\t: JUDGE\t: enters\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
 
-    *action_counter_sync.value += 1;
     sem_trywait(immigrants_registered_mutex);
     if (errno == EAGAIN)
     {
+        *action_counter_sync.value += 1;
         printf("%d\t: JUDGE\t: waiting for imm\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         sem_wait(immigrants_registered_mutex);
         sem_post(immigrants_registered_mutex);
