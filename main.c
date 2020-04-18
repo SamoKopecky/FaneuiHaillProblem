@@ -1,17 +1,17 @@
 #include "includes.h"
-#include "immigrant_factory/immigrant_factory.h"
-#include "judge/judge.h"
+#include "immigrant_factory.h"
+#include "judge.h"
 
 // Counters
-int *A;
 int *NE;
 int *NC;
 int *NB;
+int *action_counter;
 
 // Semaphores
-sem_t *A_mutex;
+sem_t *action_mutex;
 sem_t *judge_inside_mutex;
-sem_t *immigrant_registered_mutex;
+sem_t *immigrants_registered_mutex;
 
 // Custom structs
 action_counter_sync_t action_counter_sync;
@@ -20,10 +20,10 @@ immigrant_info_t immigrant_info;
 
 void map_shared_mem()
 {
-  A = init_global_var(sizeof A);
-  A_mutex = init_global_var(sizeof A_mutex);
-  action_counter_sync.value = A;
-  action_counter_sync.mutex = A_mutex;
+  action_counter = init_global_var(sizeof action_counter);
+  action_mutex = init_global_var(sizeof action_mutex);
+  action_counter_sync.value = action_counter;
+  action_counter_sync.mutex = action_mutex;
   *action_counter_sync.value = 0;
 
   immigrant_info.NE = init_global_var(sizeof NE);
@@ -34,34 +34,34 @@ void map_shared_mem()
   *immigrant_info.NB = 0;
 
   judge_inside_mutex = init_global_var(sizeof judge_inside_mutex);
-  immigrant_registered_mutex = init_global_var(sizeof immigrant_registered_mutex);
-  semaphores.immigrants_registered_mutex = immigrant_registered_mutex;
+  immigrants_registered_mutex = init_global_var(sizeof immigrants_registered_mutex);
+  semaphores.immigrants_registered_mutex = immigrants_registered_mutex;
   semaphores.judge_inside_mutex = judge_inside_mutex;
 }
 
 void unmap_shared_mem()
 {
-  munmap(NULL, sizeof A);
-  munmap(NULL, sizeof A_mutex);
+  munmap(NULL, sizeof action_counter);
+  munmap(NULL, sizeof action_mutex);
   munmap(NULL, sizeof NE);
   munmap(NULL, sizeof NC);
   munmap(NULL, sizeof NB);
   munmap(NULL, sizeof judge_inside_mutex);
-  munmap(NULL, sizeof immigrant_registered_mutex);
+  munmap(NULL, sizeof immigrants_registered_mutex);
 }
 
 void init_semaphores()
 {
-  sem_init(A_mutex, 1, 1);
+  sem_init(action_mutex, 1, 1);
   sem_init(judge_inside_mutex, 1, 1);
-  sem_init(immigrant_registered_mutex, 1, 1);
+  sem_init(immigrants_registered_mutex, 1, 1);
 }
 
 void destroy_semaphores()
 {
-  sem_destroy(A_mutex);
+  sem_destroy(action_mutex);
   sem_destroy(judge_inside_mutex);
-  sem_destroy(immigrant_registered_mutex);
+  sem_destroy(immigrants_registered_mutex);
 }
 
 void string_to_int(int *number, char *string)
