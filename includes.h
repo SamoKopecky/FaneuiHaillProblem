@@ -15,6 +15,7 @@
 typedef struct action_counter_sync action_counter_sync_t;
 typedef struct semaphores semaphores_t;
 typedef struct immigrant_info immigrant_info_t;
+typedef struct timings timings_t;
 
 struct action_counter_sync
 {
@@ -30,10 +31,20 @@ struct immigrant_info
     int name;
 };
 
+struct timings
+{
+    int *PI;
+    int *IG;
+    int *JG;
+    int *IT;
+    int *JT;
+};
+
 struct semaphores
 {
     sem_t *judge_inside_mutex;
     sem_t *immigrants_registered_mutex;
+    sem_t *immigrants_certified;
 };
 
 void *init_global_var(int size);

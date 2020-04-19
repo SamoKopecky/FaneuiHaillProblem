@@ -5,6 +5,6 @@
 #include "../immigrant/immigrant.h"
 #include <errno.h>
 
-void judge(action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores);
+void judge(int *PI, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores);
 
 #endif
