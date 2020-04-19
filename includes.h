@@ -33,11 +33,11 @@ struct immigrant_info
 
 struct timings
 {
-    int *PI;
-    int *IG;
-    int *JG;
-    int *IT;
-    int *JT;
+    int PI;
+    int IG;
+    int JG;
+    int IT;
+    int JT;
 };
 
 struct semaphores

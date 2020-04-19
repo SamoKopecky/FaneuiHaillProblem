@@ -8,13 +8,6 @@ int *NE;
 int *NC;
 int *NB;
 
-// Timings
-/* int *PI;
-int *IG;
-int *JG;
-int *IT;
-int *JT;
- */
 // Semaphores
 sem_t *A_mutex;
 sem_t *judge_inside_mutex;
@@ -78,12 +71,13 @@ void destroy_semaphores()
   sem_destroy(immigrants_certified);
 }
 
-void string_to_int(int *number, char *string)
+int string_to_int(char *string)
 {
-  sscanf(string, "%d", number);
+
+  return (int)strtol(string, NULL, 10);
 }
 
-void create_children(int *PI)
+void create_children()
 {
   int pid_t = 0;
   for (int i = 0; i < 2; i++)
@@ -91,11 +85,11 @@ void create_children(int *PI)
     {
       if ((pid_t = fork()) == 0 && i == 0)
       {
-        immigrant_factory(PI, action_counter_sync, immigrant_info, semaphores);
+        immigrant_factory(timings, action_counter_sync, immigrant_info, semaphores);
       }
       else if (pid_t == 0 && i == 1)
       {
-        judge(PI, action_counter_sync, immigrant_info, semaphores);
+        judge(timings, action_counter_sync, immigrant_info, semaphores);
       }
     }
   }
@@ -107,32 +101,14 @@ int main(int argc, char **argv)
   map_shared_mem();
   init_semaphores();
 
-  int *PI;
-  string_to_int(PI, argv[1]);
-  int IG = 0;
-  string_to_int(&IG, argv[2]);
-  int JG = 0;
-  string_to_int(&JG, argv[3]);
-  int IT = 0;
-  string_to_int(&IT, argv[4]);
-  int JT = 0;
-  string_to_int(&JT, argv[5]);
+  timings.PI = string_to_int(argv[1]);
+  timings.IG = string_to_int(argv[2]);
+  timings.JG = string_to_int(argv[3]);
+  timings.IT = string_to_int(argv[4]);
+  timings.JT = string_to_int(argv[5]);
 
-  /* string_to_int(PI, argv[1]);
-  string_to_int(IG, argv[2]);
-  string_to_int(JG, argv[3]);
-  string_to_int(IT, argv[4]);
-  string_to_int(JT, argv[5]); */
-  /* timings.PI = PI;
-  timings.IG = IG;
-  timings.JG = JG;
-  timings.IT = IT;
-  timings.JT = JT; */
-
-  create_children(PI);
+  create_children();
   sleep(20);
   destroy_semaphores();
   unmap_shared_mem();
 }
-
-//TODO: make validation on command line parameters

@@ -3,10 +3,10 @@
 int temp = 0;
 int certified_immigrants = 0;
 
-void judge(int *PI, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
+void judge(timings_t timings, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
 {
 
-    while (certified_immigrants < *PI)
+    while (certified_immigrants < timings.PI)
     {
 
         sleep(1);
