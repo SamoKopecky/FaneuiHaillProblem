@@ -1,6 +1,7 @@
 #include "includes.h"
 #include "immigrant_factory/immigrant_factory.h"
 #include "judge/judge.h"
+#include <string.h>
 
 // Counters in shared memory
 int *A;
@@ -18,7 +19,7 @@ sem_t *immigrants_certified;
 action_counter_sync_t action_counter_sync;
 semaphores_t semaphores;
 immigrant_info_t immigrant_info;
-timings_t timings;
+input_t input;
 
 void map_shared_mem()
 {
@@ -85,30 +86,56 @@ void create_children()
     {
       if ((pid_t = fork()) == 0 && i == 0)
       {
-        immigrant_factory(timings, action_counter_sync, immigrant_info, semaphores);
+        immigrant_factory(input, action_counter_sync, immigrant_info, semaphores);
       }
       else if (pid_t == 0 && i == 1)
       {
-        judge(timings, action_counter_sync, immigrant_info, semaphores);
+        judge(input, action_counter_sync, immigrant_info, semaphores);
       }
+    }
+  }
+}
+
+void validate_input(int argc, char **argv)
+{
+  const int argument_offset = 2;
+  const int max_value = 2000;
+  const int min_value = 0;
+  const int number_of_arguments = 6;
+
+  if (argc != number_of_arguments)
+  {
+    printf("Wrong number of arguments.\n");
+    exit(-1);
+  }
+
+  input.PI = string_to_int(argv[1]);
+
+  int value = 0;
+  for (size_t i = IG; i <= JT; i++)
+  {
+
+    value = string_to_int(argv[i + argument_offset]);
+    if (value >= min_value && value <= max_value)
+    {
+      input.timings[i] = value;
+    }
+    else
+    {
+      printf("Timings have to be bigger then 0 and lower then 2000.\n");
+      exit(-1);
     }
   }
 }
 
 int main(int argc, char **argv)
 {
-
+  validate_input(argc, argv);
   map_shared_mem();
   init_semaphores();
-
-  timings.PI = string_to_int(argv[1]);
-  timings.IG = string_to_int(argv[2]);
-  timings.JG = string_to_int(argv[3]);
-  timings.IT = string_to_int(argv[4]);
-  timings.JT = string_to_int(argv[5]);
-
   create_children();
-  sleep(20);
   destroy_semaphores();
   unmap_shared_mem();
+  millisleep(10000);
+  exit(0);
 }

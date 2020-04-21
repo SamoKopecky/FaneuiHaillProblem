@@ -1,6 +1,6 @@
 #include "immigrant.h"
 
-void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
+void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
 {
 
     sem_wait(action_counter_sync.mutex);
@@ -10,7 +10,7 @@ void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immig
 
     if (immigrant_info.name == 2)
     {
-        sleep(3);
+        millisleep(3000);
     }
 
     sem_wait(semaphores.judge_inside_mutex);
@@ -25,7 +25,7 @@ void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immig
 
     if (immigrant_info.name == 1)
     {
-        sleep(3);
+        millisleep(3000);
     }
 
     sem_wait(action_counter_sync.mutex);
@@ -35,6 +35,18 @@ void immigrant(action_counter_sync_t action_counter_sync, immigrant_info_t immig
     sem_post(semaphores.immigrants_registered_mutex);
     sem_post(action_counter_sync.mutex);
     sem_wait(semaphores.immigrants_certified);
+
+    sem_wait(action_counter_sync.mutex);
+    *action_counter_sync.value += 1;
+    printf("%d\t: IMM %d\t: wants certificate\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
+    sem_post(action_counter_sync.mutex);
+
+    millisleep(input.timings[IT]);
+
+    sem_wait(action_counter_sync.mutex);
+    *action_counter_sync.value += 1;
+    printf("%d\t: IMM %d\t: got certificate\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
+    sem_post(action_counter_sync.mutex);
 
     sem_wait(semaphores.judge_inside_mutex);
     sem_wait(action_counter_sync.mutex);

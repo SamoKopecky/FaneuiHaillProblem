@@ -11,11 +11,17 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <time.h>
+
+#define IG 0
+#define JG 1
+#define IT 2
+#define JT 3
 
 typedef struct action_counter_sync action_counter_sync_t;
 typedef struct semaphores semaphores_t;
 typedef struct immigrant_info immigrant_info_t;
-typedef struct timings timings_t;
+typedef struct input input_t;
 
 struct action_counter_sync
 {
@@ -31,13 +37,10 @@ struct immigrant_info
     int name;
 };
 
-struct timings
+struct input
 {
     int PI;
-    int IG;
-    int JG;
-    int IT;
-    int JT;
+    int timings[4];
 };
 
 struct semaphores
@@ -48,5 +51,7 @@ struct semaphores
 };
 
 void *init_global_var(int size);
+void millisleep(long int sleep_duration);
+void random_millisleep(int upper_bound);
 
 #endif

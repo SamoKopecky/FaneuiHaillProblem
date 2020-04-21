@@ -3,13 +3,14 @@
 int temp = 0;
 int certified_immigrants = 0;
 
-void judge(timings_t timings, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
+void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores)
 {
 
-    while (certified_immigrants < timings.PI)
+    while (certified_immigrants < input.PI)
     {
 
-        sleep(1);
+        millisleep(1000);
+        millisleep(input.timings[JG]);
 
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
@@ -47,6 +48,8 @@ void judge(timings_t timings, action_counter_sync_t action_counter_sync, immigra
         printf("%d\t: JUDGE\t: starts confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         sem_post(action_counter_sync.mutex);
 
+        millisleep(input.timings[JT]);
+
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
         temp = *immigrant_info.NE;
@@ -60,8 +63,8 @@ void judge(timings_t timings, action_counter_sync_t action_counter_sync, immigra
             sem_post(semaphores.immigrants_certified);
         }
 
-        sleep(2);
-
+        millisleep(2000);
+        millisleep(input.timings[JT]);
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
         printf("%d\t: JUDGE\t: leaves\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
