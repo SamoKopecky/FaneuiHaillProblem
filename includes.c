@@ -24,7 +24,7 @@ void random_millisleep(int upper_bound)
 {
     int random_value = random() % (upper_bound + 1);
     printf("%d\n", random_value);
-    millisleep(random());
+    millisleep(random_value);
 }
 
 void write_to_file(char *text)

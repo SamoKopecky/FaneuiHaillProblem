@@ -47,7 +47,7 @@ void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigra
     write_to_file(text);
     sem_post(action_counter_sync.mutex);
 
-    millisleep(input.timings[IT]);
+    random_millisleep(input.timings[IT]);
 
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;
