@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <time.h>
+#include <sys/wait.h>
 
 #define IG 0
 #define JG 1

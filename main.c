@@ -109,7 +109,7 @@ void validate_input(int argc, char **argv)
 
   if (argc != number_of_arguments)
   {
-    printf("Wrong number of arguments.\n");
+    fprintf(stderr, "Wrong number of arguments.\n");
     exit(1);
   }
 
@@ -126,7 +126,7 @@ void validate_input(int argc, char **argv)
     }
     else
     {
-      printf("Timings have to be bigger then 0 and lower then 2000.\n");
+      fprintf(stderr, "Timings have to be bigger then 0 and lower then 2000.\n");
       exit(1);
     }
   }
@@ -140,8 +140,15 @@ int main(int argc, char **argv)
   map_shared_mem();
   init_semaphores();
   create_children();
+  for (size_t i = 0; i < 2; i++)
+  {
+    wait(NULL);
+  }
   destroy_semaphores();
   unmap_shared_mem();
-  millisleep(10000);
   exit(0);
 }
+
+/*
+TODO: optimize file writing, test, comments, update Makefile
+*/

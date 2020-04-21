@@ -7,7 +7,6 @@ void *init_global_var(int size)
 
 void millisleep(long int sleep_duration)
 {
-
     if (sleep_duration == 0)
         return;
     const long int one_second = 1000000000;
@@ -23,7 +22,6 @@ void millisleep(long int sleep_duration)
 void random_millisleep(int upper_bound)
 {
     int random_value = random() % (upper_bound + 1);
-    printf("%d\n", random_value);
     millisleep(random_value);
 }
 

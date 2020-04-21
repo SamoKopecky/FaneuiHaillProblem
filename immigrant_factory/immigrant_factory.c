@@ -11,5 +11,9 @@ void immigrant_factory(input_t input, action_counter_sync_t action_counter_sync,
             immigrant(input, action_counter_sync, immigrant_info, semaphores, output_file);
         }
     }
+    for (size_t i = 0; i < input.PI; i++)
+    {
+        wait(NULL);
+    }
     exit(0);
 }
