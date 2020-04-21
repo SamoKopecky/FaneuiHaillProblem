@@ -4,6 +4,6 @@
 #include "../includes.h"
 #include <sched.h>
 
-void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores);
+void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores, FILE *output_file);
 
 #endif

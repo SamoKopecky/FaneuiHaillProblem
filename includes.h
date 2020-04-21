@@ -53,5 +53,6 @@ struct semaphores
 void *init_global_var(int size);
 void millisleep(long int sleep_duration);
 void random_millisleep(int upper_bound);
+void write_to_file(char *text);
 
 #endif

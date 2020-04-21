@@ -26,3 +26,10 @@ void random_millisleep(int upper_bound)
     printf("%d\n", random_value);
     millisleep(random());
 }
+
+void write_to_file(char *text)
+{
+    FILE *file = fopen("proj2.out", "a");
+    fputs(text, file);
+    fclose(file);
+}

@@ -3,6 +3,8 @@
 #include "judge/judge.h"
 #include <string.h>
 
+#define _GNU_SOURCE
+
 // Counters in shared memory
 int *A;
 int *NE;
@@ -20,6 +22,8 @@ action_counter_sync_t action_counter_sync;
 semaphores_t semaphores;
 immigrant_info_t immigrant_info;
 input_t input;
+
+FILE *output_file;
 
 void map_shared_mem()
 {
@@ -86,11 +90,11 @@ void create_children()
     {
       if ((pid_t = fork()) == 0 && i == 0)
       {
-        immigrant_factory(input, action_counter_sync, immigrant_info, semaphores);
+        immigrant_factory(input, action_counter_sync, immigrant_info, semaphores, output_file);
       }
       else if (pid_t == 0 && i == 1)
       {
-        judge(input, action_counter_sync, immigrant_info, semaphores);
+        judge(input, action_counter_sync, immigrant_info, semaphores, output_file);
       }
     }
   }
@@ -106,7 +110,7 @@ void validate_input(int argc, char **argv)
   if (argc != number_of_arguments)
   {
     printf("Wrong number of arguments.\n");
-    exit(-1);
+    exit(1);
   }
 
   input.PI = string_to_int(argv[1]);
@@ -123,13 +127,15 @@ void validate_input(int argc, char **argv)
     else
     {
       printf("Timings have to be bigger then 0 and lower then 2000.\n");
-      exit(-1);
+      exit(1);
     }
   }
 }
 
 int main(int argc, char **argv)
 {
+  output_file = fopen("proj2.out", "w+");
+  fclose(output_file);
   validate_input(argc, argv);
   map_shared_mem();
   init_semaphores();
