@@ -156,7 +156,3 @@ int main(int argc, char **argv)
   fclose(output_file);
   exit(0);
 }
-
-/*
-TODO: update Makefile
-*/

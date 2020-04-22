@@ -62,7 +62,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         snprintf(text, 100, "%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         write_to_file(text, output_file);
         sem_post(action_counter_sync.mutex);
-        for (size_t i = 0; i < certificates_made_count; i++)
+        for (int i = 0; i < certificates_made_count; i++)
         {
             sem_post(semaphores.immigrants_certified);
         }

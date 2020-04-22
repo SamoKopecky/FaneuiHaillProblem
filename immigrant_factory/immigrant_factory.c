@@ -3,7 +3,7 @@
 void immigrant_factory(input_t input, action_counter_sync_t action_counter_sync, immigrant_info_t immigrant_info, semaphores_t semaphores, FILE *output_file)
 {
     int pid = 0;
-    for (size_t i = 1; i <= input.PI; i++)
+    for (int i = 1; i <= input.PI; i++)
     {
         random_millisleep(input.timings[IG]);
         immigrant_info.name = i;
@@ -17,7 +17,7 @@ void immigrant_factory(input_t input, action_counter_sync_t action_counter_sync,
             exit(1);
         }
     }
-    for (size_t i = 0; i < input.PI; i++)
+    for (int i = 0; i < input.PI; i++)
     {
         wait(NULL);
     }
