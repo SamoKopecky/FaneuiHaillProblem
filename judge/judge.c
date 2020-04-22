@@ -10,7 +10,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
     while (certified_immigrants < input.PI)
     {
 
-        millisleep(1000);
+        //millisleep(1000);
         millisleep(input.timings[JG]);
 
         sem_wait(action_counter_sync.mutex);
@@ -20,8 +20,8 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         write_to_file(text); */
         sem_post(action_counter_sync.mutex);
 
-        sem_wait(action_counter_sync.mutex);
         sem_wait(semaphores.judge_inside_mutex);
+        sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
         printf("%d\t: JUDGE\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         /* snprintf(text, 100, "%d\t: JUDGE\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
@@ -74,7 +74,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
             sem_post(semaphores.immigrants_certified);
         }
 
-        millisleep(2000);
+        //millisleep(2000);
         random_millisleep(input.timings[JT]);
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;

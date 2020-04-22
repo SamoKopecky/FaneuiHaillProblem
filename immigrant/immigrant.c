@@ -12,11 +12,6 @@ void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigra
     write_to_file(text); */
     sem_post(action_counter_sync.mutex);
 
-    if (immigrant_info.name == 2)
-    {
-        millisleep(3000);
-    }
-
     sem_wait(semaphores.judge_inside_mutex);
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;
@@ -28,11 +23,6 @@ void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigra
     sem_post(semaphores.judge_inside_mutex);
     sem_post(action_counter_sync.mutex);
     sem_wait(semaphores.immigrants_registered_mutex);
-
-    if (immigrant_info.name == 1)
-    {
-        millisleep(3000);
-    }
 
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;

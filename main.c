@@ -76,12 +76,6 @@ void destroy_semaphores()
   sem_destroy(immigrants_certified);
 }
 
-int string_to_int(char *string)
-{
-
-  return (int)strtol(string, NULL, 10);
-}
-
 void create_children()
 {
   int pid_t = 0;
@@ -113,13 +107,13 @@ void validate_input(int argc, char **argv)
     exit(1);
   }
 
-  input.PI = string_to_int(argv[1]);
+  input.PI = (int)strtol(argv[1], NULL, 10);
 
   int value = 0;
   for (size_t i = IG; i <= JT; i++)
   {
 
-    value = string_to_int(argv[i + argument_offset]);
+    value = (int)strtol(argv[i + argument_offset], NULL, 10);
     if (value >= min_value && value <= max_value)
     {
       input.timings[i] = value;
@@ -150,5 +144,5 @@ int main(int argc, char **argv)
 }
 
 /*
-TODO: optimize file writing, test, comments, update Makefile
+TODO: optimize file writing, test, comments, update Makefile, edit wait(NULL) to waitpid or waitid
 */
