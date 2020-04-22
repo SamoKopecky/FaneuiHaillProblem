@@ -2,18 +2,10 @@
 #define INCLUDES_H_
 
 #include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <semaphore.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <time.h>
-#include <sys/wait.h>
 
+/* indices for timming array in input struct */
 #define IG 0
 #define JG 1
 #define IT 2
@@ -50,10 +42,5 @@ struct semaphores
     sem_t *immigrants_registered_mutex;
     sem_t *immigrants_certified;
 };
-
-void *init_global_var(int size);
-void millisleep(long int sleep_duration);
-void random_millisleep(int upper_bound);
-void write_to_file(char *text);
 
 #endif

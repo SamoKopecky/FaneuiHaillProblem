@@ -1,51 +1,57 @@
 #include "includes.h"
+#include "utils/utils.h"
 #include "immigrant_factory/immigrant_factory.h"
 #include "judge/judge.h"
+#include <unistd.h>
+#include <sys/wait.h>
 #include <string.h>
 
-#define _GNU_SOURCE
-
-// Counters in shared memory
+/* Counters in shared memory */
 int *A;
 int *NE;
 int *NC;
 int *NB;
 
-// Semaphores
+/* Semaphores */
 sem_t *A_mutex;
 sem_t *judge_inside_mutex;
 sem_t *immigrant_registered_mutex;
-sem_t *immigrants_certified;
+sem_t *immigrants_certified_mutex;
 
-// Custom structs
+/* Custom structs for passing arguments to functions, defined in #includes.h */
 action_counter_sync_t action_counter_sync;
 semaphores_t semaphores;
 immigrant_info_t immigrant_info;
 input_t input;
 
+/* Outputs fo the processes are written here */
 FILE *output_file;
 
 void map_shared_mem()
 {
-  A = init_global_var(sizeof A);
-  A_mutex = init_global_var(sizeof A_mutex);
+  A = map_shared_variable(sizeof A);
+  A_mutex = map_shared_variable(sizeof A_mutex);
   action_counter_sync.value = A;
   action_counter_sync.mutex = A_mutex;
-  *action_counter_sync.value = 0;
 
-  immigrant_info.NE = init_global_var(sizeof NE);
-  immigrant_info.NC = init_global_var(sizeof NC);
-  immigrant_info.NB = init_global_var(sizeof NB);
+  immigrant_info.NE = map_shared_variable(sizeof NE);
+  immigrant_info.NC = map_shared_variable(sizeof NC);
+  immigrant_info.NB = map_shared_variable(sizeof NB);
+
+  judge_inside_mutex = map_shared_variable(sizeof judge_inside_mutex);
+  immigrant_registered_mutex = map_shared_variable(sizeof immigrant_registered_mutex);
+  immigrants_certified_mutex = map_shared_variable(sizeof immigrants_certified_mutex);
+  semaphores.immigrants_registered_mutex = immigrant_registered_mutex;
+  semaphores.judge_inside_mutex = judge_inside_mutex;
+  semaphores.immigrants_certified = immigrants_certified_mutex;
+}
+
+void init_shared_counters()
+{
+  *action_counter_sync.value = 0;
   *immigrant_info.NE = 0;
   *immigrant_info.NC = 0;
   *immigrant_info.NB = 0;
-
-  judge_inside_mutex = init_global_var(sizeof judge_inside_mutex);
-  immigrant_registered_mutex = init_global_var(sizeof immigrant_registered_mutex);
-  immigrants_certified = init_global_var(sizeof immigrants_certified);
-  semaphores.immigrants_registered_mutex = immigrant_registered_mutex;
-  semaphores.judge_inside_mutex = judge_inside_mutex;
-  semaphores.immigrants_certified = immigrants_certified;
 }
 
 void unmap_shared_mem()
@@ -57,7 +63,7 @@ void unmap_shared_mem()
   munmap(NULL, sizeof NB);
   munmap(NULL, sizeof judge_inside_mutex);
   munmap(NULL, sizeof immigrant_registered_mutex);
-  munmap(NULL, sizeof immigrants_certified);
+  munmap(NULL, sizeof immigrants_certified_mutex);
 }
 
 void init_semaphores()
@@ -65,7 +71,7 @@ void init_semaphores()
   sem_init(A_mutex, 1, 1);
   sem_init(judge_inside_mutex, 1, 1);
   sem_init(immigrant_registered_mutex, 1, 1);
-  sem_init(immigrants_certified, 1, 0);
+  sem_init(immigrants_certified_mutex, 1, 0);
 }
 
 void destroy_semaphores()
@@ -73,22 +79,27 @@ void destroy_semaphores()
   sem_destroy(A_mutex);
   sem_destroy(judge_inside_mutex);
   sem_destroy(immigrant_registered_mutex);
-  sem_destroy(immigrants_certified);
+  sem_destroy(immigrants_certified_mutex);
 }
 
 void create_children()
 {
-  int pid_t = 0;
+  int pid = 0;
   for (int i = 0; i < 2; i++)
   {
     {
-      if ((pid_t = fork()) == 0 && i == 0)
+      if ((pid = fork()) == 0 && i == 0)
       {
         immigrant_factory(input, action_counter_sync, immigrant_info, semaphores, output_file);
       }
-      else if (pid_t == 0 && i == 1)
+      else if (pid == 0 && i == 1)
       {
         judge(input, action_counter_sync, immigrant_info, semaphores, output_file);
+      }
+      else if (pid == -1)
+      {
+        fprintf(stderr, "Fork failed.\n");
+        exit(1);
       }
     }
   }
@@ -132,11 +143,14 @@ int main(int argc, char **argv)
   fclose(output_file);
   validate_input(argc, argv);
   map_shared_mem();
+  init_shared_counters();
   init_semaphores();
   create_children();
+  /* Waiting for immigrant_factory and judge to exit */
   for (size_t i = 0; i < 2; i++)
   {
-    wait(NULL);
+    /* -1 means any child */
+    waitpid(-1, NULL, 0);
   }
   destroy_semaphores();
   unmap_shared_mem();
@@ -144,5 +158,5 @@ int main(int argc, char **argv)
 }
 
 /*
-TODO: optimize file writing, test, comments, update Makefile, edit wait(NULL) to waitpid or waitid
+TODO: optimize file writing, update Makefile
 */
