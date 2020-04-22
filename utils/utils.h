@@ -8,6 +8,6 @@
 void *map_shared_variable(int size);
 int millisleep(long int sleep_duration);
 int random_millisleep(int upper_bound);
-void write_to_file(char *text);
+void write_to_file(char *text, FILE *file);
 
 #endif

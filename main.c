@@ -140,7 +140,6 @@ void validate_input(int argc, char **argv)
 int main(int argc, char **argv)
 {
   output_file = fopen("proj2.out", "w+");
-  fclose(output_file);
   validate_input(argc, argv);
   map_shared_mem();
   init_shared_counters();
@@ -149,14 +148,15 @@ int main(int argc, char **argv)
   /* Waiting for immigrant_factory and judge to exit */
   for (size_t i = 0; i < 2; i++)
   {
-    /* -1 means any child */
+    /* -1 means wait for any child that exists */
     waitpid(-1, NULL, 0);
   }
   destroy_semaphores();
   unmap_shared_mem();
+  fclose(output_file);
   exit(0);
 }
 
 /*
-TODO: optimize file writing, update Makefile
+TODO: update Makefile
 */

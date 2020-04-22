@@ -25,14 +25,13 @@ int random_millisleep(int upper_bound)
     return millisleep(random_value);
 }
 
-void write_to_file(char *text)
+void write_to_file(char *text, FILE *file)
 {
-    FILE *file = fopen("proj2.out", "a");
     if (file == NULL)
     {
         fprintf(stderr, "Failed to open or create a file.\n");
         exit(1);
     }
     fputs(text, file);
-    fclose(file);
+    fflush(file);
 }
