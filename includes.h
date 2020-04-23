@@ -27,6 +27,7 @@ struct immigrant_info
     int *NE;
     int *NC;
     int *NB;
+    int *certificates_made;
     int name;
 };
 
@@ -41,6 +42,7 @@ struct semaphores
     sem_t *judge_inside_mutex;
     sem_t *immigrants_registered_mutex;
     sem_t *immigrants_certified;
+    sem_t *test;
 };
 
 #endif

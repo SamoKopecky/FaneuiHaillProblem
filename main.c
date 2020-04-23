@@ -11,12 +11,14 @@ int *A;
 int *NE;
 int *NC;
 int *NB;
+int *certificates_made;
 
 /* Semaphores */
 sem_t *A_mutex;
 sem_t *judge_inside_mutex;
 sem_t *immigrant_registered_mutex;
 sem_t *immigrants_certified_mutex;
+sem_t *test;
 
 /* Custom structs for passing arguments to functions, defined in #includes.h */
 action_counter_sync_t action_counter_sync;
@@ -37,13 +39,16 @@ void map_shared_mem()
   immigrant_info.NE = map_shared_variable(sizeof NE);
   immigrant_info.NC = map_shared_variable(sizeof NC);
   immigrant_info.NB = map_shared_variable(sizeof NB);
+  immigrant_info.certificates_made = map_shared_variable(sizeof certificates_made);
 
   judge_inside_mutex = map_shared_variable(sizeof judge_inside_mutex);
   immigrant_registered_mutex = map_shared_variable(sizeof immigrant_registered_mutex);
   immigrants_certified_mutex = map_shared_variable(sizeof immigrants_certified_mutex);
+  test = map_shared_variable(sizeof test);
   semaphores.immigrants_registered_mutex = immigrant_registered_mutex;
   semaphores.judge_inside_mutex = judge_inside_mutex;
   semaphores.immigrants_certified = immigrants_certified_mutex;
+  semaphores.test = test;
 }
 
 void init_shared_counters()
@@ -52,6 +57,7 @@ void init_shared_counters()
   *immigrant_info.NE = 0;
   *immigrant_info.NC = 0;
   *immigrant_info.NB = 0;
+  *immigrant_info.certificates_made = 0;
 }
 
 void unmap_shared_mem()
@@ -64,6 +70,7 @@ void unmap_shared_mem()
   munmap(NULL, sizeof judge_inside_mutex);
   munmap(NULL, sizeof immigrant_registered_mutex);
   munmap(NULL, sizeof immigrants_certified_mutex);
+  munmap(NULL, sizeof test);
 }
 
 void init_semaphores()
@@ -72,6 +79,7 @@ void init_semaphores()
   sem_init(judge_inside_mutex, 1, 1);
   sem_init(immigrant_registered_mutex, 1, 1);
   sem_init(immigrants_certified_mutex, 1, 0);
+  sem_init(test, 1, 1);
 }
 
 void destroy_semaphores()
@@ -80,6 +88,7 @@ void destroy_semaphores()
   sem_destroy(judge_inside_mutex);
   sem_destroy(immigrant_registered_mutex);
   sem_destroy(immigrants_certified_mutex);
+  sem_destroy(test);
 }
 
 void create_children()
