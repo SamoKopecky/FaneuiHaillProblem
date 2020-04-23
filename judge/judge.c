@@ -12,7 +12,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
 
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
-        printf("%d\t: JUDGE\t: wants to enter\t\n", *action_counter_sync.value);
         snprintf(string, 100, "%d\t: JUDGE\t: wants to enter\t\n", *action_counter_sync.value);
         write_to_file(string, output_file);
         sem_post(action_counter_sync.mutex);
@@ -21,7 +20,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         sem_wait(semaphores.judge_inside_mutex);
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
-        printf("%d\t: JUDGE\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         snprintf(string, 100, "%d\t: JUDGE\t: enters\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         write_to_file(string, output_file);
         sem_post(action_counter_sync.mutex);
@@ -33,7 +31,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         {
             errno = 0;
             *action_counter_sync.value += 1;
-            printf("%d\t: JUDGE\t: waits for imm\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
             snprintf(string, 100, "%d\t: JUDGE\t: waits for imm\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
             write_to_file(string, output_file);
             sem_post(action_counter_sync.mutex);
@@ -48,7 +45,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
 
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
-        printf("%d\t: JUDGE\t: starts confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         snprintf(string, 100, "%d\t: JUDGE\t: starts confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         write_to_file(string, output_file);
         sem_post(action_counter_sync.mutex);
@@ -64,7 +60,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         }
         *immigrant_info.NE = 0;
         *immigrant_info.NC = 0;
-        printf("%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         snprintf(string, 100, "%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         write_to_file(string, output_file);
         for (int i = 0; i < *immigrant_info.certificates_made_count; i++)
@@ -76,7 +71,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         random_millisleep(input.timings[JT]);
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
-        printf("%d\t: JUDGE\t: leaves\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         snprintf(string, 100, "%d\t: JUDGE\t: leaves\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         write_to_file(string, output_file);
         sem_post(action_counter_sync.mutex);
@@ -85,7 +79,6 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
 
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;
-    printf("%d\t: JUDGE\t: finishes\n", *action_counter_sync.value);
     snprintf(string, 100, "%d\t: JUDGE\t: finishes\n", *action_counter_sync.value);
     write_to_file(string, output_file);
     sem_post(action_counter_sync.mutex);
