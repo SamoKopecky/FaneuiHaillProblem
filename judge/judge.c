@@ -56,7 +56,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
 
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
-        *immigrant_info.certificates_made = *immigrant_info.NE;
+        *immigrant_info.certificates_made_count = *immigrant_info.NE;
         certified_immigrants_count += *immigrant_info.NE;
         if (*immigrant_info.NE == 0)
         {
@@ -66,9 +66,8 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         *immigrant_info.NC = 0;
         printf("%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
         snprintf(string, 100, "%d\t: JUDGE\t: ends confirmation\t: %d\t: %d\t: %d\n", *action_counter_sync.value, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
-
         write_to_file(string, output_file);
-        for (int i = 0; i < *immigrant_info.certificates_made; i++)
+        for (int i = 0; i < *immigrant_info.certificates_made_count; i++)
         {
             sem_post(semaphores.immigrants_certified);
         }

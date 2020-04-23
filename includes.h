@@ -27,7 +27,7 @@ struct immigrant_info
     int *NE;
     int *NC;
     int *NB;
-    int *certificates_made;
+    int *certificates_made_count;
     int name;
 };
 

@@ -19,7 +19,7 @@ void immigrant_factory(input_t input, action_counter_sync_t action_counter_sync,
     }
     for (int i = 0; i < input.PI; i++)
     {
-        wait(NULL);
+        waitpid(-1, NULL, 0);
     }
     exit(0);
 }

@@ -29,10 +29,10 @@ void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigra
     sem_wait(action_counter_sync.mutex);
     *action_counter_sync.value += 1;
     *immigrant_info.NC += 1;
-    sem_post(semaphores.immigrants_registered_mutex);
     printf("%d\t: IMM %d\t: checks\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     snprintf(string, 100, "%d\t: IMM %d\t: checks\t\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     write_to_file(string, output_file);
+    sem_post(semaphores.immigrants_registered_mutex);
     sem_post(action_counter_sync.mutex);
 
     sem_wait(semaphores.immigrants_certified);
@@ -49,8 +49,8 @@ void immigrant(input_t input, action_counter_sync_t action_counter_sync, immigra
     printf("%d\t: IMM %d\t: got certificate\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     snprintf(string, 100, "%d\t: IMM %d\t: got certificate\t: %d\t: %d\t: %d\n", *action_counter_sync.value, immigrant_info.name, *immigrant_info.NE, *immigrant_info.NC, *immigrant_info.NB);
     write_to_file(string, output_file);
-    *immigrant_info.certificates_made -= 1;
-    if (*immigrant_info.certificates_made == 0)
+    *immigrant_info.certificates_made_count -= 1;
+    if (*immigrant_info.certificates_made_count == 0)
     {
         sem_post(semaphores.test);
     }

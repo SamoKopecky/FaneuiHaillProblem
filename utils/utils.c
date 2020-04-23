@@ -11,7 +11,7 @@ int millisleep(long int sleep_duration)
         return 0;
     const long int one_second_in_nano = 1000000000;
     struct timespec tim, tim1;
-
+    
     sleep_duration = sleep_duration * 1000000;                      /* convert from milli to nano */
     const long int remainder = sleep_duration % one_second_in_nano; /* get the decimal numbers etc. 4.2 -> remainder = 0.2 */
     tim.tv_sec = (sleep_duration - remainder) / one_second_in_nano;
