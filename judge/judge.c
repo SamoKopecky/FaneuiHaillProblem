@@ -16,7 +16,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         write_to_file(string, output_file);
         sem_post(action_counter_sync.mutex);
 
-        sem_wait(semaphores.test);
+        sem_wait(semaphores.certificates_taken_mutex);
         sem_wait(semaphores.judge_inside_mutex);
         sem_wait(action_counter_sync.mutex);
         *action_counter_sync.value += 1;
@@ -56,7 +56,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         certified_immigrants_count += *immigrant_info.NE;
         if (*immigrant_info.NE == 0)
         {
-            sem_post(semaphores.test);
+            sem_post(semaphores.certificates_taken_mutex);
         }
         *immigrant_info.NE = 0;
         *immigrant_info.NC = 0;
@@ -64,7 +64,7 @@ void judge(input_t input, action_counter_sync_t action_counter_sync, immigrant_i
         write_to_file(string, output_file);
         for (int i = 0; i < *immigrant_info.certificates_made_count; i++)
         {
-            sem_post(semaphores.immigrants_certified);
+            sem_post(semaphores.immigrants_certified_mutex);
         }
         sem_post(action_counter_sync.mutex);
 

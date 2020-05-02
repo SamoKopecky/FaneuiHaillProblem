@@ -54,3 +54,4 @@ dkms.conf
 .idea/
 proj2
 .vscode/
+*.zip

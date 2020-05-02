@@ -41,8 +41,8 @@ struct semaphores
 {
     sem_t *judge_inside_mutex;
     sem_t *immigrants_registered_mutex;
-    sem_t *immigrants_certified;
-    sem_t *test;
+    sem_t *immigrants_certified_mutex;
+    sem_t *certificates_taken_mutex;
 };
 
 #endif

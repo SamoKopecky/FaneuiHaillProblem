@@ -11,15 +11,16 @@ int *A; /* Action counter */
 int *NE;
 int *NC;
 int *NB;
-int *certificates_made; /* judge sets this value to the number of immigrants registered each round 
-                           decrements each time an immigrant gets a certificate, once 0 unlocks the certificates_taken_mutex */
+int *certificates_made_count; /* judge sets this value to the number of immigrants registered each round 
+                                 decrements each time an immigrant gets a certificate, once the value is 0,
+                                 the last immigrant unlocks the certificates_taken_mutex */
 
 /* Semaphores */
-sem_t *A_mutex;                    /* mutex for the action counter */
-sem_t *judge_inside_mutex;         /* mutex for checking if judge is inside */
-sem_t *immigrant_registered_mutex; /* mutex for checking if all of the immigrants inside are registered */
-sem_t *immigrants_certified_mutex; /* mutex for immigrants that are registered and will get a certificate once judge creates them */
-sem_t *certificates_taken_mutex;   /* mutex for checking if all of the created certificates were taken so that a new round of certificates can be created */
+sem_t *A_mutex;                     /* mutex for the action counter */
+sem_t *judge_inside_mutex;          /* mutex for checking if judge is inside */
+sem_t *immigrants_registered_mutex; /* mutex for checking if all of the immigrants inside are registered */
+sem_t *immigrants_certified_mutex;  /* mutex for immigrants that are registered and will get a certificate once judge creates them */
+sem_t *certificates_taken_mutex;    /* mutex for checking if all of the created certificates were taken so that a new round of certificates can be created */
 
 /* Custom structs for passing arguments to functions, defined in includes.h */
 action_counter_sync_t action_counter_sync;
@@ -40,16 +41,16 @@ void map_shared_mem()
   immigrant_info.NE = map_shared_variable(sizeof NE);
   immigrant_info.NC = map_shared_variable(sizeof NC);
   immigrant_info.NB = map_shared_variable(sizeof NB);
-  immigrant_info.certificates_made_count = map_shared_variable(sizeof certificates_made);
+  immigrant_info.certificates_made_count = map_shared_variable(sizeof certificates_made_count);
 
   judge_inside_mutex = map_shared_variable(sizeof judge_inside_mutex);
-  immigrant_registered_mutex = map_shared_variable(sizeof immigrant_registered_mutex);
+  immigrants_registered_mutex = map_shared_variable(sizeof immigrants_registered_mutex);
   immigrants_certified_mutex = map_shared_variable(sizeof immigrants_certified_mutex);
   certificates_taken_mutex = map_shared_variable(sizeof certificates_taken_mutex);
-  semaphores.immigrants_registered_mutex = immigrant_registered_mutex;
+  semaphores.immigrants_registered_mutex = immigrants_registered_mutex;
   semaphores.judge_inside_mutex = judge_inside_mutex;
-  semaphores.immigrants_certified = immigrants_certified_mutex;
-  semaphores.test = certificates_taken_mutex;
+  semaphores.immigrants_certified_mutex = immigrants_certified_mutex;
+  semaphores.certificates_taken_mutex = certificates_taken_mutex;
 }
 
 void init_shared_counters()
@@ -69,7 +70,7 @@ void unmap_shared_mem()
   munmap(NULL, sizeof NC);
   munmap(NULL, sizeof NB);
   munmap(NULL, sizeof judge_inside_mutex);
-  munmap(NULL, sizeof immigrant_registered_mutex);
+  munmap(NULL, sizeof immigrants_registered_mutex);
   munmap(NULL, sizeof immigrants_certified_mutex);
   munmap(NULL, sizeof certificates_taken_mutex);
 }
@@ -78,7 +79,7 @@ void init_semaphores()
 {
   sem_init(A_mutex, 1, 1);
   sem_init(judge_inside_mutex, 1, 1);
-  sem_init(immigrant_registered_mutex, 1, 1);
+  sem_init(immigrants_registered_mutex, 1, 1);
   sem_init(immigrants_certified_mutex, 1, 0);
   sem_init(certificates_taken_mutex, 1, 1);
 }
@@ -87,14 +88,14 @@ void destroy_semaphores()
 {
   sem_destroy(A_mutex);
   sem_destroy(judge_inside_mutex);
-  sem_destroy(immigrant_registered_mutex);
+  sem_destroy(immigrants_registered_mutex);
   sem_destroy(immigrants_certified_mutex);
   sem_destroy(certificates_taken_mutex);
 }
 
 void create_children()
 {
-  int pid = 0;
+  int pid;
   for (int i = 0; i < 2; i++)
   {
     {
@@ -126,10 +127,10 @@ void validate_input(int argc, char **argv)
   input.PI = (int)strtol(argv[1], NULL, 10);
 
   int value = 0;
-  for (size_t i = IG; i <= JT; i++)
+  for (size_t i = 0; i <= 3; i++)
   {
 
-    value = (int)strtol(argv[i + 2], NULL, 10); /* +2 is for the argument offset*/
+    value = (int)strtol(argv[i + 2], NULL, 10); /* +2 is for the argument offset */
     if (value >= 0 && value <= 2000)
     {
       input.timings[i] = value;
